@@ -36,10 +36,12 @@ func client() {
   _, err = Conn.Write([]byte("anything"))
   if err != nil { log.Fatal(err) }
 
-  var buf [512]byte
-  n, err := Conn.Read(buf[0:])
-  if err != nil { log.Fatal(err) }
+  for {
+    var buf [512]byte
+    n, err := Conn.Read(buf[0:])
+    if err != nil { log.Fatal(err) }
 
-  fmt.Println(string(buf[0:n]))
+    fmt.Println(string(buf[0:n]))
+  }
 
 }

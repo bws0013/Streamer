@@ -4,11 +4,25 @@ import (
   "fmt"
   "log"
   "net"
+  "time"
+  "strconv"
 )
+
+var (
+  msg = "0"
+)
+
 
 func main() {
 
-  server()
+  go server()
+
+  i := 0
+  for {
+    msg = strconv.Itoa(i)
+    i++
+    time.Sleep(time.Second * 1)
+  }
 
 }
 
@@ -21,22 +35,10 @@ func server() error {
   if err != nil { log.Fatal(err) }
   defer ServerConn.Close()
 
+
   for {
     client(ServerConn)
   }
-
-  // buf := make([]byte, 1024)
-  //
-  // n,addr,err := ServerConn.ReadFromUDP(buf)
-  //
-  // fmt.Println(n, "->", addr)
-  //
-  // if err != nil { log.Fatal(err) }
-  //
-  // for {
-  //   ServerConn.WriteToUDP([]byte("daytime"), addr)
-  // }
-  // address := string(addr.IP) + ":" + string(addr.Port)
 
 
   // client(address)
@@ -59,7 +61,11 @@ func client(conn *net.UDPConn) {
   _, addr, err := conn.ReadFromUDP(buf[0:])
   if err != nil { return }
 
-  conn.WriteToUDP([]byte("daytime"), addr)
+  for {
+    _, err := conn.WriteToUDP([]byte(msg), addr)
+    if err != nil { log.Fatal(err) }
+    time.Sleep(time.Second * 1)
+  }
 }
 
 // func client(addr string) {
