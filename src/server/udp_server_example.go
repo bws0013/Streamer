@@ -4,8 +4,6 @@ import (
   "fmt"
   "log"
   "net"
-  "time"
-  "strconv"
 )
 
 func main() {
@@ -16,31 +14,34 @@ func main() {
 
 func server() error {
   ServerAddr, err := net.ResolveUDPAddr("udp",":10001")
-  if err != nil {
-  	log.Fatal(err)
-  }
+  if err != nil { log.Fatal(err) }
 
   //simple read
   ServerConn, err := net.ListenUDP("udp", ServerAddr)
-  if err != nil {
-  	log.Fatal(err)
-  }
+  if err != nil { log.Fatal(err) }
   defer ServerConn.Close()
 
-  buf := make([]byte, 1024)
+  for {
+    client(ServerConn)
+  }
 
-  n,addr,err := ServerConn.ReadFromUDP(buf)
+  // buf := make([]byte, 1024)
+  //
+  // n,addr,err := ServerConn.ReadFromUDP(buf)
+  //
+  // fmt.Println(n, "->", addr)
+  //
+  // if err != nil { log.Fatal(err) }
+  //
+  // for {
+  //   ServerConn.WriteToUDP([]byte("daytime"), addr)
+  // }
+  // address := string(addr.IP) + ":" + string(addr.Port)
 
-  fmt.Println(n, "->", addr)
 
-  if err != nil { log.Fatal(err) }
+  // client(address)
 
-  address := string(addr.IP) + ":" + string(addr.Port)
-
-
-  client(address)
-
-
+  fmt.Println("DuNZO")
   return nil
   // for {
   //
@@ -52,27 +53,36 @@ func server() error {
   // }
 }
 
-func client(addr string) {
-  ServerAddr,err := net.ResolveUDPAddr("udp",addr)
-  if err != nil { log.Fatal(err) }
+func client(conn *net.UDPConn) {
+  fmt.Println("here")
+  var buf [512]byte
+  _, addr, err := conn.ReadFromUDP(buf[0:])
+  if err != nil { return }
 
-  LocalAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:0")
-  if err != nil { log.Fatal(err) }
-
-  Conn, err := net.DialUDP("udp", LocalAddr, ServerAddr)
-  if err != nil { log.Fatal(err) }
-
-  defer Conn.Close()
-  i := 0
-  for {
-    msg := strconv.Itoa(i)
-    i++
-    buf := []byte(msg)
-    _,err := Conn.Write(buf)
-    if err != nil {
-        fmt.Println(msg, err)
-    }
-    time.Sleep(time.Second * 1)
-  }
-
+  conn.WriteToUDP([]byte("daytime"), addr)
 }
+
+// func client(addr string) {
+//   ServerAddr,err := net.ResolveUDPAddr("udp",addr)
+//   if err != nil { log.Fatal(err) }
+//
+//   LocalAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:10001")
+//   if err != nil { log.Fatal(err) }
+//
+//   Conn, err := net.DialUDP("udp", LocalAddr, ServerAddr)
+//   if err != nil { log.Fatal(err) }
+//
+//   defer Conn.Close()
+//   i := 0
+//   for {
+//     msg := strconv.Itoa(i)
+//     i++
+//     buf := []byte(msg)
+//     _,err := Conn.Write(buf)
+//     if err != nil {
+//         fmt.Println(msg, err)
+//     }
+//     time.Sleep(time.Second * 1)
+//   }
+//
+// }
