@@ -31,15 +31,18 @@ func server() error {
   if err != nil { log.Fatal(err) }
 
   //simple read
-  ServerConn, err := net.ListenUDP("udp", ServerAddr)
-  if err != nil { log.Fatal(err) }
-  defer ServerConn.Close()
-
 
   for {
-    client(ServerConn)
-  }
+    ServerConn, err := net.ListenUDP("udp", ServerAddr)
+    if err != nil { log.Fatal(err) }
+    defer ServerConn.Close()
 
+    fmt.Println("lll")
+
+    client(ServerConn)
+
+
+  }
 
   // client(address)
 

@@ -8,4 +8,7 @@ Considerations:
 
 
 
-### In progress
+### UPDATE
+As of 9/24/17
+
+Switching from a udp base to a tcp one. This occurs from reading more about streaming data in tcp vs udp.
